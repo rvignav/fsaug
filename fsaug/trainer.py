@@ -15,7 +15,8 @@ class Trainer():
     '''
     Train a Net object with custom config and normalization options.
     '''
-    def __init__(self, batch_size_train=64, batch_size_test=1000, learning_rate=1e-4, log_interval=50):
+    def __init__(self, model, batch_size_train=64, batch_size_test=1000, learning_rate=1e-4, log_interval=50):
+        self.network = model
         self.batch_size_train = batch_size_train
         self.batch_size_test = batch_size_test
         self.learning_rate = learning_rate
@@ -50,13 +51,13 @@ class Trainer():
         self.inp = inp.cpu().detach().numpy()[0][0]
 
     def train(epoch):
-        network.train()
+        self.network.train()
         for batch_idx, (data, target) in enumerate(self.train_loader):
             data = data.cuda()
             target = target.cuda()
             optimizer.zero_grad()
-            output = network(data)
-            loss = network.loss_function(output, target)
+            output = self.network(data)
+            loss = self.network.loss_function(output, target)
             loss.backward()
             optimizer.step()
             if batch_idx % log_interval == 0:
@@ -65,7 +66,7 @@ class Trainer():
                 100. * batch_idx / len(self.train_loader), loss.item()))
     
     def test():
-        network.eval()
+        self.network.eval()
         test_loss = 0
         correct = 0
         with torch.no_grad():
@@ -73,8 +74,8 @@ class Trainer():
             data = data.cuda()
             target = target.cuda()
             target = target.view(batch_size_test)
-            output = network(data)
-            test_loss += network.loss_function(output, target).item()
+            output = self.network(data)
+            test_loss += self.network.loss_function(output, target).item()
             pred = output.data.max(1, keepdim=True)[1]
             correct += pred.eq(target.data.view_as(pred)).sum()
         test_loss /= len(self.test_loader.dataset)
@@ -89,7 +90,7 @@ class Trainer():
             test()
 
     def log_details():
-        summary(network, (1, 28, 28))
+        summary(self.network, (1, 28, 28))
     
     def eval():
         test()
