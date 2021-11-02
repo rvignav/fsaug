@@ -5,9 +5,10 @@ Trains a convolutional neural network (CNN) on custom (small) datasets using a n
 Default CNN architecture:
 ![network](https://user-images.githubusercontent.com/33817654/100400521-b38bf700-300b-11eb-98df-ca7084a258e1.jpg)
 
-
+<!-- 
 # Installation
 
 ```
 pip install fsaug
 ```
+ -->
